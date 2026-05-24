@@ -1,0 +1,121 @@
+package repl
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/augme06/pokedexcli/internal/pokeapi"
+)
+
+type cliCommand struct {
+	name        string
+	description string
+	callback    func(parameter string, config *pokeapi.Config) error
+}
+
+func GetCommands() map[string]cliCommand {
+	return map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 location areas",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 location areas",
+			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "Lists all pokemon in a location area",
+			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Tries to catch a pokemon",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspects a pokemon, if caught",
+			callback:    commandInspect,
+		},
+	}
+}
+
+func Callback(command, parameter string, config *pokeapi.Config) error {
+	if _, ok := GetCommands()[command]; !ok {
+		return fmt.Errorf("Unknown command")
+	}
+	if err := GetCommands()[command].callback(parameter, config); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Callbacks
+func commandExit(parameter string, config *pokeapi.Config) error {
+	fmt.Println("Closing the Pokedex... Goodbye!")
+	defer os.Exit(0)
+	return nil
+}
+
+func commandHelp(parameter string, config *pokeapi.Config) error {
+	commands := GetCommands()
+	fmt.Println("Usage:")
+	for _, c := range commands {
+		fmt.Printf("%s: %s\n", c.name, c.description)
+	}
+	return nil
+}
+
+func commandMap(parameter string, config *pokeapi.Config) error {
+	return pokeapi.GetNextMap(config)
+}
+
+func commandMapb(parameter string, config *pokeapi.Config) error {
+	return pokeapi.GetPreviousMap(config)
+}
+
+func commandExplore(parameter string, config *pokeapi.Config) error {
+	return pokeapi.Explore(parameter)
+}
+
+func commandCatch(parameter string, config *pokeapi.Config) error {
+
+	pokemon, err := pokeapi.GetPokemon(parameter)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	if pokeapi.CatchTry(pokemon.BaseExperience) {
+		fmt.Printf("%s was caught!\n", pokemon.Name)
+		pokeapi.AddToPokedex(pokemon)
+	} else {
+		fmt.Printf("%s escaped!\n", pokemon.Name)
+	}
+	return nil
+}
+
+func commandInspect(parameter string, config *pokeapi.Config) error {
+	info, ok := pokeapi.Pokedex[parameter]
+	if !ok {
+		fmt.Println("pokemon not caught")
+		return nil
+	}
+
+	pokeapi.FormatOutput(info)
+
+	return nil
+}
