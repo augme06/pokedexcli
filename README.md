@@ -115,4 +115,3 @@ Pokedex > exit
 
 - [PokéAPI Documentation](https://pokeapi.co/)
 - [Go Documentation](https://golang.org/doc/)
->>>>>>> 24e82d2 (feat: adicionar estrutura inicial do projeto)
