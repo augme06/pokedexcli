@@ -95,10 +95,17 @@ func commandMapb(parameter string, config *pokeapi.Config) error {
 }
 
 func commandExplore(parameter string, config *pokeapi.Config) error {
+	if len(parameter) == 0 {
+		return fmt.Errorf("Missing argument: expected a <location-area>")
+	}
+
 	return pokeapi.Explore(parameter)
 }
 
 func commandCatch(parameter string, config *pokeapi.Config) error {
+	if len(parameter) == 0 {
+		return fmt.Errorf("Missing argument: expected a <pokemon-name>")
+	}
 
 	pokemon, err := pokeapi.GetPokemon(parameter)
 	if err != nil {
