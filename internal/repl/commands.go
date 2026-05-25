@@ -71,16 +71,17 @@ func Callback(command, parameter string, config *pokeapi.Config) error {
 
 // Callbacks
 func commandExit(parameter string, config *pokeapi.Config) error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	defer os.Exit(0)
+	fmt.Print(ansi.ExitAltScreen)
+	fmt.Printf("You have captured %d Pokemon(s)!\n", len(pokeapi.Pokedex))
+	os.Exit(0)
 	return nil
 }
 
 func commandHelp(parameter string, config *pokeapi.Config) error {
 	commands := GetCommands()
-	fmt.Println("Usage:")
+	fmt.Println(ansi.Format("Usage:", ansi.Bold))
 	for _, c := range commands {
-		fmt.Printf("%s: %s\n", c.name, c.description)
+		fmt.Printf("%s: %s\n", ansi.Format(c.name, ansi.Green), c.description)
 	}
 	return nil
 }
@@ -104,12 +105,12 @@ func commandCatch(parameter string, config *pokeapi.Config) error {
 		return err
 	}
 
-	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+	fmt.Printf("Throwing a Pokeball at %s...\n", ansi.Format(pokemon.Name, ansi.Bold, ansi.Yellow))
 	if pokeapi.CatchTry(pokemon.BaseExperience) {
-		fmt.Printf("%s was caught!\n", pokemon.Name)
+		fmt.Printf(ansi.Format("%s was caught!\n", ansi.Bold), pokemon.Name)
 		pokeapi.AddToPokedex(pokemon)
 	} else {
-		fmt.Printf("%s escaped!\n", pokemon.Name)
+		fmt.Printf(ansi.Format("%s escaped!\n", ansi.Bold), pokemon.Name)
 	}
 	return nil
 }
