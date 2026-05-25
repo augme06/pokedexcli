@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/augme06/pokedexcli/internal/ansi"
 	"github.com/augme06/pokedexcli/internal/pokeapi"
 )
 
@@ -49,6 +50,11 @@ func GetCommands() map[string]cliCommand {
 			name:        "inspect",
 			description: "Inspects a pokemon, if caught",
 			callback:    commandInspect,
+		},
+		"clear": {
+			name:        "clear",
+			description: "Clears all content on screen",
+			callback:    commandClear,
 		},
 	}
 }
@@ -117,5 +123,10 @@ func commandInspect(parameter string, config *pokeapi.Config) error {
 
 	pokeapi.FormatOutput(info)
 
+	return nil
+}
+
+func commandClear(parameter string, config *pokeapi.Config) error {
+	fmt.Print(ansi.Clear)
 	return nil
 }
