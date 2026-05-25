@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/augme06/pokedexcli/internal/ansi"
 	"github.com/augme06/pokedexcli/internal/pokecache"
 )
 
@@ -48,7 +49,7 @@ func GetNextMap(config *Config) error {
 	config.Previous = info.Previous
 
 	for _, c := range info.Results {
-		fmt.Println(c.Name)
+		fmt.Println(ansi.Format(c.Name, ansi.Blue))
 	}
 
 	return nil
@@ -87,7 +88,7 @@ func GetPreviousMap(config *Config) error {
 	config.Previous = info.Previous
 
 	for _, c := range info.Results {
-		fmt.Println(c.Name)
+		fmt.Println(ansi.Format(c.Name, ansi.Blue))
 	}
 
 	return nil
@@ -115,7 +116,7 @@ func Explore(locationArea string) error {
 	}
 
 	for _, p := range info.Encounters {
-		fmt.Println(p.PokemonRef.Name)
+		fmt.Println(ansi.Format(p.PokemonRef.Name, ansi.Yellow))
 	}
 
 	return nil
