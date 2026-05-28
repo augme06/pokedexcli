@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/augme06/pokedexcli/internal/ansi"
 	"github.com/augme06/pokedexcli/internal/pokecache"
 )
 
@@ -32,7 +33,7 @@ func GetNextMap(config *Config) error {
 	} else {
 		d, err := doRequest("GET", url)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %w", err)
 		}
 		data = d
 	}
@@ -41,14 +42,14 @@ func GetNextMap(config *Config) error {
 
 	info := Response{}
 	if err := json.Unmarshal(data, &info); err != nil {
-		return err
+		return fmt.Errorf("Error unmarshalling data: %w", err)
 	}
 
 	config.Next = info.Next
 	config.Previous = info.Previous
 
 	for _, c := range info.Results {
-		fmt.Println(c.Name)
+		fmt.Println(ansi.Format(c.Name, ansi.Blue))
 	}
 
 	return nil
@@ -71,7 +72,7 @@ func GetPreviousMap(config *Config) error {
 	} else {
 		d, err := doRequest("GET", url)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %w", err)
 		}
 		data = d
 	}
@@ -80,14 +81,14 @@ func GetPreviousMap(config *Config) error {
 
 	info := Response{}
 	if err := json.Unmarshal(data, &info); err != nil {
-		return err
+		return fmt.Errorf("Error unmarshalling data: %w", err)
 	}
 
 	config.Next = info.Next
 	config.Previous = info.Previous
 
 	for _, c := range info.Results {
-		fmt.Println(c.Name)
+		fmt.Println(ansi.Format(c.Name, ansi.Blue))
 	}
 
 	return nil
@@ -102,7 +103,7 @@ func Explore(locationArea string) error {
 	} else {
 		d, err := doRequest("GET", url)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %w", err)
 		}
 		data = d
 	}
@@ -111,11 +112,11 @@ func Explore(locationArea string) error {
 
 	info := PokemonResponse{}
 	if err := json.Unmarshal(data, &info); err != nil {
-		return err
+		return fmt.Errorf("Error unmarshalling data: %w", err)
 	}
 
 	for _, p := range info.Encounters {
-		fmt.Println(p.PokemonRef.Name)
+		fmt.Println(ansi.Format(p.PokemonRef.Name, ansi.Yellow))
 	}
 
 	return nil
@@ -139,7 +140,7 @@ func GetPokemon(pokemon string) (Pokemon, error) {
 
 	info := Pokemon{}
 	if err := json.Unmarshal(data, &info); err != nil {
-		return Pokemon{}, err
+		return Pokemon{}, fmt.Errorf("Error unmarshalling data: %w", err)
 	}
 
 	return info, nil
@@ -148,18 +149,18 @@ func GetPokemon(pokemon string) (Pokemon, error) {
 func doRequest(method, url string) ([]byte, error) {
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error creating request: %w", err)
 	}
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error making request: %w", err)
 	}
 	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error reading response body: %w", err)
 	}
 
 	return data, nil
