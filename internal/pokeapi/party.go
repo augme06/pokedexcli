@@ -9,7 +9,12 @@ import (
 var party = make(map[string]Pokemon, 6)
 
 func GetParty() {
-	fmt.Println("Your party")
+	if len(party) == 0 {
+		fmt.Println("Your party is empty!")
+		return
+	}
+
+	fmt.Println("YOUR PARTY")
 	for _, p := range party {
 		fmt.Printf(ansi.Format(" - %s\n", ansi.Yellow), p.Name)
 	}
