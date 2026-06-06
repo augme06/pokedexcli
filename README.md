@@ -15,18 +15,21 @@ pokedex/
 │   └── pokedexcli/
 │       └── main.go              
 ├── internal/
-│   ├── repl/
-│   │   ├── repl.go              
-│   │   ├── commands.go         
-│   │   └── repl_test.go         
+│   ├── ansi/
+│   │   └── ansi.go      
 │   ├── pokeapi/
-│   │   ├── api.go              
+│   │   ├── api.go
+│   │   ├── party.go   
 │   │   ├── types.go            
 │   │   ├── utils.go            
 │   │   └── pokedex.go          
-│   └── pokecache/
-│       ├── cache.go             
-│       └── cache_test.go        
+│   │   pokecache/
+│   │   ├── cache.go             
+│   │   └── cache_test.go
+│   └── repl/
+│       ├── repl.go              
+│       ├── commands.go         
+│       └── repl_test.go       
 ├── go.mod                                         
 └── README.md                  
 ```
@@ -103,6 +106,25 @@ Pokedex > catch pikachu
 Exibe informações sobre um Pokémon capturado (nome, altura, peso, stats, tipos).
 ```
 Pokedex > inspect pikachu
+```
+
+### clear
+Limpa todo o conteúdo exibido na tela.
+```
+Pokedex > clear
+```
+
+### party `[pokemon-name]`
+Lista os Pokémon na sua party ou adiciona um Pokémon à party quando passado um nome.
+```
+Pokedex > party           # lista os Pokémon na party
+Pokedex > party pikachu   # adiciona 'pikachu' à party
+```
+
+### partyd `<pokemon-name>`
+Remove um Pokémon da sua party.
+```
+Pokedex > partyd pikachu
 ```
 
 ### exit
