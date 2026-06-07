@@ -56,6 +56,16 @@ func GetCommands() map[string]cliCommand {
 			description: "Clears all content on screen",
 			callback:    commandClear,
 		},
+		"party": {
+			name:        "party",
+			description: "List or add a pokemon to your party",
+			callback:    commandParty,
+		},
+		"partyd": {
+			name:        "partyd",
+			description: "Remove a pokemon from your party",
+			callback:    commandPartyd,
+		},
 	}
 }
 
@@ -136,5 +146,34 @@ func commandInspect(parameter string, config *pokeapi.Config) error {
 
 func commandClear(parameter string, config *pokeapi.Config) error {
 	fmt.Print(ansi.Clear)
+	return nil
+}
+
+func commandParty(parameter string, config *pokeapi.Config) error {
+	if len(parameter) == 0 {
+		pokeapi.GetParty()
+		return nil
+	}
+
+	err := pokeapi.AddToParty(parameter)
+	if err != nil {
+		return fmt.Errorf("Error: %w", err)
+	}
+
+	fmt.Printf("Added %s to party!\n", parameter)
+	return nil
+}
+
+func commandPartyd(parameter string, config *pokeapi.Config) error {
+	if len(parameter) == 0 {
+		return fmt.Errorf("Missing argument: expected a <pokemon-name>")
+	}
+
+	err := pokeapi.RemoveFromParty(parameter)
+	if err != nil {
+		return fmt.Errorf("Error: %w", err)
+	}
+
+	fmt.Printf("Removed %s from party!\n", parameter)
 	return nil
 }
